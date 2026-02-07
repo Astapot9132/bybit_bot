@@ -10,6 +10,9 @@ from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
 
+from cfg import REVENUE_PERCENT, PERCENT_TO_KEEP_IN_CRYPTOCURRENCY_AFTER_ITERATION, PERCENT_STEP_PER_ORDER, \
+    MAX_ORDER_COUNT, DELAY_BETWEEN_REQUESTS, PERCENT_BETWEEN_FIRST_ORDER_AND_CURRENT_PRICE, \
+    MAX_PERCENT_BETWEEN_FIRST_ORDER_AND_CURRENT_PRICE, TRADE_PAIR
 
 # revision identifiers, used by Alembic.
 revision: str = 'bybitbot0006'
@@ -32,6 +35,16 @@ def upgrade() -> None:
     sa.Column('trade_pair', sa.String(length=64), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
+
+    op.execute(f"""
+    INSERT INTO trade_settings (revenue_percent, percent_of_revenue_to_keep_in_crypto, percent_step_per_order, max_order_count, delay_between_requests_in_seconds,
+        percent_between_first_order_and_current_price, max_percent_between_first_order_and_current_price, trade_pair)
+        VALUES ({REVENUE_PERCENT}, {PERCENT_TO_KEEP_IN_CRYPTOCURRENCY_AFTER_ITERATION}, 
+        {PERCENT_STEP_PER_ORDER}, {MAX_ORDER_COUNT}, {DELAY_BETWEEN_REQUESTS}, 
+        {PERCENT_BETWEEN_FIRST_ORDER_AND_CURRENT_PRICE}, 
+        {MAX_PERCENT_BETWEEN_FIRST_ORDER_AND_CURRENT_PRICE}, 
+        '{TRADE_PAIR}')
+    """)
     # ### end Alembic commands ###
 
 
